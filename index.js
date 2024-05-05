@@ -28,6 +28,13 @@ async function run() {
         const tourCollection = client.db('tourDB').collection('tour')
         const userCollection = client.db('tourDB').collection('user');
 
+        // sending db data in json format to show in client side
+        app.get('/tour', async (req, res) => {
+            const cursor = tourCollection.find()
+            const result = await cursor.toArray();
+            res.send(result)
+        })
+
 
         // posting tour data to DB
         app.post('/tour', async (req, res) => {

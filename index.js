@@ -36,11 +36,44 @@ async function run() {
         })
 
 
+        // sending db data in json format to show in client side
+        app.get('/tourAsc', async (req, res) => {
+            const cursor = tourCollection.find().sort({cost:1})
+            const result = await cursor.toArray();
+            res.send(result)
+        })
+
+        // finding tour data of specefic ID in db
+        app.get('/tour/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = {_id: new ObjectId(id)}
+            const result = await tourCollection.findOne(query)
+            res.send(result)
+        })
+
+        // "/my-list/:email"
+        app.get('/my-list/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = {email}
+            const cursor = tourCollection.find(query)
+            const result = await cursor.toArray();
+            res.send(result)
+        })
+
+
         // posting tour data to DB
         app.post('/tour', async (req, res) => {
             const newTour = req.body;
             console.log(newTour)
             const result = await tourCollection.insertOne(newTour)
+            res.send(result)
+        })
+
+        // deleting tour in DB
+        app.delete('/tour/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = {_id: new ObjectId(id)}
+            const result = await tourCollection.deleteOne(query)
             res.send(result)
         })
 

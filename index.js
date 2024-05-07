@@ -27,6 +27,7 @@ async function run() {
 
         const tourCollection = client.db('tourDB').collection('tour')
         const userCollection = client.db('tourDB').collection('user');
+        const countryCollection = client.db('tourDB').collection('country');
 
         // sending db data in json format to show in client side
         app.get('/tour', async (req, res) => {
@@ -43,7 +44,7 @@ async function run() {
             res.send(result)
         })
 
-        // finding tour data of specefic ID in db
+        // finding tour to update the data in db
         app.get('/tour/:id', async (req, res) => {
             const id = req.params.id;
             const query = {_id: new ObjectId(id)}
@@ -51,7 +52,35 @@ async function run() {
             res.send(result)
         })
 
-        // "/my-list/:email"
+        // updating coffee in DB
+        app.put('/tour/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = {_id: new ObjectId(id)}
+            const options = { upsert: true }
+            const updatedTour = req.body;
+            const tour = {
+                $set: {
+                    photo: updatedTour.photo,
+                    name: updatedTour.name,
+                    cname: updatedTour.cname,
+                    location: updatedTour.location,
+                    details: updatedTour.details,
+                    cost: updatedTour.cost,
+                    season: updatedTour.season,
+                    time: updatedTour.time,
+                    visitors: updatedTour.visitors,
+                    uname: updatedTour.uname,
+                    email: updatedTour.email
+
+                }
+            }
+
+            const result = await tourCollection.updateOne(filter, tour, options )
+            res.send(result)
+        })
+
+
+        // "/my-list/:email" getting specific email tour data
         app.get('/my-list/:email', async (req, res) => {
             const email = req.params.email;
             const query = {email}
@@ -59,6 +88,16 @@ async function run() {
             const result = await cursor.toArray();
             res.send(result)
         })
+
+        //  getting specific country tour data
+        app.get('/countries/:country', async (req, res) => {
+            const cname = req.params.country;
+            const query = {cname}
+            const cursor = tourCollection.find(query)
+            const result = await cursor.toArray();
+            res.send(result)
+        })
+
 
 
         // posting tour data to DB
@@ -88,6 +127,14 @@ async function run() {
             const result = await userCollection.insertOne(user)
             res.send(result)
         })
+
+        // sending country db data in json format to show in client side
+        app.get('/country', async (req, res) => {
+            const cursor = countryCollection.find()
+            const result = await cursor.toArray();
+            res.send(result)
+        })
+
 
 
 

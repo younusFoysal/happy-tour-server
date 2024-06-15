@@ -44,6 +44,7 @@ async function run() {
             res.send(result)
         })
 
+
         // finding tour to update the data in db
         app.get('/tour/:id', async (req, res) => {
             const id = req.params.id;
@@ -134,6 +135,7 @@ async function run() {
             const result = await cursor.toArray();
             res.send(result)
         })
+
 
 
 
